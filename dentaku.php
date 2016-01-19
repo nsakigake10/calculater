@@ -13,7 +13,6 @@
     
     if(isset($_POST['kazu_1']))$kazu_1  = $_POST['kazu_1'];
     if(isset($_POST['kazu_2']))$kazu_2  = $_POST['kazu_2'];
-    
     if(isset($_POST['operator'])){
         $ope       = $_POST['operator'];
     }
