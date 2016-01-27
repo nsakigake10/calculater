@@ -9,7 +9,8 @@
     $num_1    = "";
     $num_2    = "";
     $num_3    = "";
-    $operator = "+";
+    $operator = "";
+    $error[]  = "";
     
     
     if(isset($_POST['num_1']))      $num_1    = $_POST['num_1'];
@@ -20,11 +21,11 @@
     
     
     if(ctype_digit($num_1) === false){
-        print("Error : num_1 Please input number\n");
+        $error[] = 'Error : num_1 Please input number';
     }
     
     if(ctype_digit($num_2) === false){
-        print("Error : num_2 Please input number\n");
+        $error[] = 'Error : num_2 Please input number';
     }
 
     
@@ -37,18 +38,32 @@
     //POST = データがURLで引き渡されない
     
     if((ctype_digit($num_1))&&(ctype_digit($num_2))){
-    
-    if($operator == "+") $num_3 = $num_1 + $num_2;
-    if($operator == "/") {
-        if($num_2 == 0){
-            print("Error : not capable of being computed\n");
-        } else {
-            $num_3 = $num_1 / $num_2;
+        switch ($operator) {
+                case "+":
+                $num_3 = $num_1 + $num_2;
+                break;
+                
+                case "*":
+                $num_3 = $num_1 * $num_2;
+                break;
+                
+                case "-":
+                $num_3 = $num_1 - $num_2;
+                break;
+                
+                case "/":
+                if($num_2 == 0){
+                    $error[] = 'Error : not capable of being computed';
+                } else {
+                    $num_3 = $num_1 / $num_2;
+                }
+                break;
+                
+                default:
+                    $error[] = 'Error : Undefined operator';
         }
-    }
-    if($operator == "-") $num_3 = $num_1 - $num_2;
-    if($operator == "*") $num_3 = $num_1 * $num_2;
     
+
     }
     
     
@@ -71,19 +86,40 @@
 <input type="text" name="num_1" value="<?php echo htmlspecialchars($num_1); ?>">
 
 <select name= "operator">
-<?php ($_POST["operator"] =="+")?$val = "selected":$val = ""; ?>
-        <option value="+" <?=$val?>>+</option>
-<?php ($_POST["operator"] =="*")?$val = "selected":$val = ""; ?>
-        <option value="*" <?=$val?>>*</option>
-<?php ($_POST["operator"] =="-")?$val = "selected":$val = ""; ?>
-        <option value="-" <?=$val?>>-</option>
-<?php ($_POST["operator"] =="/")?$val = "selected":$val = ""; ?>
-        <option value="/" <?=$val?>>/</option>
+
+<option value="+"
+<?php if(isset($_POST['operator']))if($_POST['operator'] =="+"){echo 'selected';} ?>
+>+</option>
+
+<option value="*"
+<?php if(isset($_POST['operator']))if($_POST['operator'] =="*"){echo 'selected';} ?>
+>*</option>
+
+<option value="-"
+<?php if(isset($_POST['operator']))if($_POST['operator'] =="-"){echo 'selected';} ?>
+>-</option>
+
+<option value="/"
+<?php if(isset($_POST['operator']))if($_POST['operator'] =="/"){echo 'selected';} ?>
+>/</option>
+
 </select>
 
 <input type="text" name="num_2" value="<?php echo htmlspecialchars($num_2); ?>"> =
 <span><?php echo htmlspecialchars($num_3); ?></span>
 <input type="submit" name="button_sum" value="計算">
+
+<?php
+    $error_num = 0;
+
+    if($_SERVER["REQUEST_METHOD"] === "POST"){
+        while(isset($error[$error_num]) != null){
+            echo $error[$error_num];
+            echo "<br />";
+            $error_num = $error_num + 1;
+        }
+    }
+?>
 
 </p>
 </form>
